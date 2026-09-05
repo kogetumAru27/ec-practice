@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model User {
+  id            String    @id @default(cuid())
+  type        Roletype  @default(USER)
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  accounts      Account[]
+  addresses     Address[]
+  orders        Order[]
+  paymentethods PaymentMethod[]
+  cart          Cart?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt       
+}
+enum Roletype {
+  USER
+  ADMIN
+}
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+model Product {
+  id            String  @id @default(cuid())
+  price         Int
+  cartItems     CartItem[]
+  imageUrl      String?
+  description   String
+  name          String
+  categoryId    String
+  category      Category  @relation(fields:[categoryId],references:[id])
+  orderItems    OrderItem[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt   
+}
+model Category {
+  id        String  @id @default(cuid())
+  name      String　@unique
+  products  Product[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt   
+}
+model Cart {
+  id         String  @id @default(cuid())
+  cartItems  CartItem[]
+  userId     String   @unique
+  user       User     @relation(fields:[userId],references:[id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt   
+}
+model CartItem {
+  id          String @id @default(cuid())
+  cartId      String
+  cart        Cart   @relation(fields:[cartId],references:[id])
+  productId   String
+  product     Product @relation(fields:[productId],references:[id])
+  quantity  Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt 
+}
+model Order {
+  id          String       @id @default(cuid())
+  orderItems  OrderItem[]
+  payments    Payment?
+  totalprice  Int
+  userId      String
+  user        User          @relation(fields:[userId],references:[id])
+  addressId   String
+  address     Address       @relation(fields:[addressId],references:[id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt 
+}
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order     @relation(fields:[orderId],references:[id])
+  productId  String    
+  product    Product    @relation(fields:[productId],references:[id])
+  quantity   Int 
+  priceAtPurchase Int 
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt 
+}
+model Address {
+  id          String  @id @default(cuid())
+  userId      String
+  user        User   @relation(fields:[userId],references:[id])
+  order       Order[]
+  postalCode String
+  prefecture String
+  city       String
+  line1      String
+  line2      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+model Payment {
+  id          String    @id @default(cuid())
+  orderId     String    @unique   // 1つの注文につき、支払いは1件(1対1)
+  orders       Order     @relation(fields:[orderId],references:[id])
+  amount      Int                 // その支払いの金額
+  method      PayMethod           // 支払い方法
+  status      PayStatus @default(PENDING)  // 支払い状況
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+} 
+enum PayMethod {
+  CASH
+  CREDIT_CARD
+  BANK_TRANSFER
+}
+enum PayStatus {
+  PENDING    // 未払い
+  PAID       // 支払い済み
+  FAILED     // 決済失敗
+  REFUNDED   // 返金済み
+}
+model PaymentMethod {
+  id              String @id @default(cuid())
+  userId          String
+  user            User   @relation(fields:[userId],references:[id])
+  stripePaymentMethodId String   // Stripeが発行したトークン(カード番号そのものではない)
+  last4           String   // "1234" のような、下4桁だけ(表示用)
+  brand           String   // "Visa" など
+}
