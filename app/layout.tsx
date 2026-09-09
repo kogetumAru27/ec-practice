@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ButtonNav from "@/components/ButtonNav";
-
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,7 +19,18 @@ export const metadata: Metadata = {
   description: "学習用ECサイト",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }:  {children:React.ReactNode}) {
+  const session = await auth();
+  let cartItemsCount = 0;
+  if(session){
+    const cart = await prisma.cart.findUnique({
+      where:{userId:session.user.id},
+      include:{cartItems:true}
+    });
+    cartItemsCount = cart?.cartItems.reduce(
+      (sum,item) => sum + item.quantity,0
+    ) ?? 0;
+  }
   return (
     <html
       lang="ja"
@@ -28,7 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1 pb-16">
           {children}
         </main>
-        <ButtonNav />
+        <ButtonNav cartItemCount={cartItemsCount}/>
       </body>
     </html>
   );

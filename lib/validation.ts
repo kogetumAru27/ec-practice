@@ -23,3 +23,11 @@ export const productsSchema = z.object({
     price:z.coerce.number({error:"正しい価格を入力してください"}).positive("価格は0より大きい値にしてください"),
     imageUrl: z.string().optional(),
 });
+export const checkoutSchema = z.object({
+    postalCode:z.string().min(1,"郵便番号を入力してください"),
+    prefecture:z.string().min(1,"都道府県を入力してください"),
+    city:z.string().min(1,"市区町村を入力してください"),
+    line1:z.string().min(1,"番地を入力してください"),
+    line2:z.string().optional(),
+    paymentMethod:z.enum(["CASH","CREDIT_CARD","BANK_TRANSFER"],{error:"お支払い方法を選択してください"}),
+})

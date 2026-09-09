@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import QuanitityControl from "@/components/updateButton";
+import Link from "next/link";
 export default async function CartPage(){
     const session = await auth();
     if(!session){
@@ -50,8 +51,11 @@ export default async function CartPage(){
                     <span className="text-lg font-bold text-emerald-700">{total.toLocaleString()}円</span>
                     </div>
                     )}
+                    <Link href="/checkout" className="w-full mt-8 inline-block px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition text-center">レジに進む</Link>
                 </div>
+                
             )}
+
         </div>
     )
 }
