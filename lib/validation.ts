@@ -31,3 +31,13 @@ export const checkoutSchema = z.object({
     line2:z.string().optional(),
     paymentMethod:z.enum(["CASH","CREDIT_CARD","BANK_TRANSFER"],{error:"お支払い方法を選択してください"}),
 })
+export const changePasswordSchema = z.object({
+    currentPass:z.string().min(1,"現在のパスワードを入力してください"),
+    newPass:z.string()
+    .min(8,"パスワードは8文字以上で入力してください")
+    .max(16,"パスワードは16文字以内で入力してください"),
+    confirmpassword:z.string()
+}).refine((data) => data.newPass === data.confirmpassword,{
+    message:"新しいパスワードが一致しません",
+    path:["confirmpassword"]
+})

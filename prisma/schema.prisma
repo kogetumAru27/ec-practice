@@ -95,8 +95,15 @@ model Order {
   user        User          @relation(fields:[userId],references:[id])
   addressId   String
   address     Address       @relation(fields:[addressId],references:[id])
+  status      OrderStatus   @default(PROCESSING)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt 
+}
+enum OrderStatus {
+  PROCESSING   // 処理中
+  SHIPPED      // 発送済み
+  DELIVERED    // 配達完了
+  CANCELED     // キャンセル
 }
 model OrderItem {
   id         String   @id @default(cuid())

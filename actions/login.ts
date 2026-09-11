@@ -25,8 +25,9 @@ export async function loginAction(formData:FormData){
     }
     }
 export async function googleAction(){
-    await signIn("google")
+    console.log("googleActionが呼ばれました");
+    await signIn("google",{redirectTo:"/"})
 }
 export async function githubAction(){
-    await signIn("github")
+    await signIn("github",{redirectTo:"/"})
 }

@@ -1,13 +1,12 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home,User,ShoppingCart,Search} from "lucide-react";
+import { Home,User,ShoppingCart} from "lucide-react";
 type props = {
     cartItemCount:number
 }
 const navItems = [
     {href:"/",label:"ホーム",icon:Home},
-    {href:"/category",label:"検索",icon:Search},
     { href: "/cart", label: "カート", icon: ShoppingCart },
     { href: "/mypage", label: "マイページ", icon: User },
 ]

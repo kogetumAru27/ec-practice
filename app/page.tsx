@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
-import addCart from "@/actions/cart";
 import  Link  from "next/link";
-
+import AddcartButton from "@/components/AddToCartButton";
 export default async function Home({ searchParams }: { searchParams: Promise<{ q?: string,category?:string }> }) {
     const { q,category } = await searchParams;//q?はあってもなくてもどちらでも良い
     const categories = await prisma.category.findMany()
@@ -50,8 +49,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
                     {products.map((p) => (
                         <div 
                             key={p.id} 
-                            className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
-                        >
+                            className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+                            <Link href={`/products/${p.id}`}>
                             <div className="relative aspect-square bg-gray-50">
                                 <Image 
                                     src={p.imageUrl || "/no-image.png"} 
@@ -67,15 +66,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
                                 </span>
                                 <h3 className="mt-2 font-medium text-gray-900 truncate">{p.name}</h3>
                                 <p className="mt-1 text-emerald-700 font-semibold">{p.price.toLocaleString()}円</p>
-                                <form action={async () => {
-                                    "use server";
-                                    await addCart(p.id)
-                                }}>
-                                    <button type="submit" className="mt-3 w-full py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition">
-                                        カートに入れる
-                                    </button>
-                                </form>
                             </div>
+                            </Link>
+                            <AddcartButton productId={p.id}/>
                         </div>
                     ))}
                 </div>
