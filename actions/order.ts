@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkoutSchema } from "@/lib/validation";
-
+import { createorderItems } from "@/lib/ordertest";
 export default async function createOrder(formData:FormData){
     const session = await auth();
     if(!session){
@@ -52,16 +52,10 @@ export default async function createOrder(formData:FormData){
             }
         }) 
         //カートアイテムを元にorderアイテムを作成
-        await prisma.orderItem.createMany({
-            data:cart.cartItems.map(item => (
-                {
-                    orderId:order.id,
-                    productId:item.productId,
-                    quantity:item.quantity,
-                    priceAtPurchase:item.product.price
-                }
-            ))
-        });
+       const OrderItem = createorderItems({cartItems:cart.cartItems,orderId:order.id})
+       await prisma.orderItem.createMany({
+        data:OrderItem
+       })
         //支払い方法を作成
         await prisma.payment.create({
             data:{

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { calculateCartTotal } from "@/lib/calculations";
 import Image from "next/image";
 import QuanitityControl from "@/components/updateButton";
 import Link from "next/link";
@@ -19,7 +20,7 @@ export default async function CartPage(){
             }
         }
     })
-    const total = Items?.cartItems.reduce((sum,item) => sum + item.product.price * item.quantity,0) ?? 0;
+    const total = calculateCartTotal(Items?.cartItems ?? [])
     return(
         <div className="max-w-2xl mx-auto px-6 py-10">
             <h1 className="text-2xl font-bold text-gray-900 mb-8">カート</h1>

@@ -15,8 +15,11 @@ export default async function AdminPage(){
     return(
         <div className="max-w-6xl mx-auto px-6 py-10">
         <div className="flex justify-between items-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">管理画面</h1>
+            <h1 className="text-2xl font-bold">管理画面</h1>
+            <div className="flex gap-2 mt-4">
             <Link href="/admin/products/new" className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition cursor-pointer">+商品を追加</Link>
+            <Link href="/admin/order" className="px-4 py-2  bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition cursor-pointer ">🔍注文一覧を見る</Link>
+            </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map(p => (
