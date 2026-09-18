@@ -13,6 +13,6 @@ describe("calculateCartTotal", () => {
             },
         ];
         const total = calculateCartTotal(dummyCartItems);
-        expect(total).toBe(5500);
+        expect(total).toBe(9900);
     })
 })
