@@ -18,6 +18,7 @@ test('商品をカートに追加すると、バッジの数が1つ増える', a
 
   // tシャツをカートに追加
   await page.getByRole('link', { name: /tシャツ/ }).locator('..').getByRole('button', { name: 'カートに入れる' }).click();
+  await page.waitForTimeout(1000);
 
   // バッジの数が1つ増えていることを確認
   await expect(cartLink).toContainText(String(beforeCount + 1));
