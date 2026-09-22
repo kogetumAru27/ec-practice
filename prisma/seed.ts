@@ -1,5 +1,6 @@
 import { PrismaClient } from "@/app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcryptjs";
 const adapter = new PrismaPg({
     connectionString:process.env.DATABASE_URL!
 })
@@ -13,6 +14,27 @@ async function main(){
         create:{name}
     })
  }
+ const hashpass = await bcrypt.hash("password12345",10)
+ await prisma.user.upsert({
+    where:{email:"test@example.com"},
+    update:{},
+    create:{
+        email:"test@example.com",
+        password:hashpass,
+        type:"USER",
+        name:"テストユーザー"
+    }
+ });
+ await prisma.user.upsert({
+    where:{email:"admin@example.com"},
+    update:{},
+    create:{
+        email:"admin@example.com",
+        password:hashpass,
+        type:"ADMIN",
+        name:"テスト管理者"
+    }
+ })
     console.log("seed登録できました!")
 }
 main()
