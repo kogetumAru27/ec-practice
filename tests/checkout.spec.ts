@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-test.beforeEach(async({page}) => {
+test.beforeEach(async({page,context}) => {
+    await context.clearCookies();
     await page.goto('/login');
     await page.getByPlaceholder('メールアドレス').fill('test@example.com');
     await page.locator('input[name="password"]').fill('password12345');
